@@ -159,7 +159,7 @@ public class BuildOverInfo {
             content.append(">[下载地址：https://hd.get88.cn/test/tzykapk/web/index.html#/XGZXG](http://hd.get88.cn/test/tzykapk/web/index.html#/XGZXG)\n");
         }
         if (StringUtils.isNotEmpty(this.consoleUrl)) {
-            content.append(" >[查看控制台](" + this.consoleUrl);
+            content.append(" >[查看Jenkins控制台](" + this.consoleUrl + ")");
         }
 //        if (isTzyk) {
 //            switch (buildType) {
