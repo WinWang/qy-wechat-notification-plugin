@@ -7,6 +7,11 @@
     <f:entry title="仅失败才@" field="failNotify" help="/plugin/qy-wechat-notification/help-globalConfig-failNotify.html">
         <f:checkbox />
     </f:entry>
+
+    <f:entry title="开始构建通知" field="isSendBuildBefore" help="/plugin/qy-wechat-notification/help-globalConfig-isSendBeforeBuild.html">
+            <f:checkbox />
+        </f:entry>
+
     <f:entry title="通知UserID" field="mentionedId" help="/plugin/qy-wechat-notification/help-globalConfig-mentionedId.html">
         <f:textbox />
     </f:entry>

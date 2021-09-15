@@ -2,8 +2,11 @@ package org.jenkinsci.plugins.qywechat.model;
 
 import hudson.util.Secret;
 
+import java.util.HashMap;
+
 /**
  * 配置项
+ *
  * @author jiaju
  */
 public class NotificationConfig {
@@ -50,5 +53,33 @@ public class NotificationConfig {
      * 仅在失败通知
      */
     public boolean failNotify = false;
+
+    /**
+     * 是否构架开始发送
+     */
+    public boolean isSendBuildBefore = false;
+
+    /**
+     * git提交记录
+     */
+    public String commitMessage = "";
+
+    /**
+     * 动态参数化构建参数
+     */
+    public String buildParam = "";
+
+
+    /**
+     * 构建参数对象
+     */
+    public HashMap<String, Object> buildHashMap = new HashMap();
+
+
+    /**
+     * 编译信息
+     */
+    public String buildMsg = "";
+
 
 }

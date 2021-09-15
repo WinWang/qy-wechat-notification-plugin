@@ -37,6 +37,11 @@
 构建失败时，群机器人则会执行失败的通知
 ![构建失败通知](http://cdn.itwake.com/Fr34HIw4g--6Mcln_WpY89wkXE0H.png)
 
+
+![test](https://hd.get88.cn/test/tzykapk/img/xg_release.png)
+
+<img  src="https://hd.get88.cn/test/tzykapk/img/xg_release.png" width="150" />
+
 ## 项目开发
 ```
 mvn org.jenkins-ci.tools:maven-hpi-plugin:run

@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.qywechat.dto;
 
+import hudson.scm.ChangeLogSet;
 import org.jenkinsci.plugins.qywechat.NotificationUtil;
 import org.jenkinsci.plugins.qywechat.model.NotificationConfig;
 import hudson.model.AbstractBuild;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 /**
  * 开始构建的通知信息
+ *
  * @author jiaju
  */
 public class BuildBeginInfo {
@@ -43,31 +45,46 @@ public class BuildBeginInfo {
      */
     private String topicName = "";
 
-    public BuildBeginInfo(String projectName, AbstractBuild<?, ?> build, NotificationConfig config){
+    /**
+     * git提交记录
+     */
+    private String commitMsg = "";
+
+    public BuildBeginInfo(String projectName, AbstractBuild<?, ?> build, NotificationConfig config) {
         //获取请求参数
         List<ParametersAction> parameterList = build.getActions(ParametersAction.class);
-        if(parameterList!=null && parameterList.size()>0){
-            for(ParametersAction p : parameterList){
-                for(ParameterValue pv : p.getParameters()){
+        if (parameterList != null && parameterList.size() > 0) {
+            for (ParametersAction p : parameterList) {
+                for (ParameterValue pv : p.getParameters()) {
                     this.params.put(pv.getName(), pv.getValue());
                 }
             }
         }
         //预计时间
-        if(build.getProject().getEstimatedDuration()>0){
+        if (build.getProject().getEstimatedDuration() > 0) {
             this.durationTime = build.getProject().getEstimatedDuration();
         }
+
+        //修改日志
+        ChangeLogSet<? extends ChangeLogSet.Entry> changeSet = build.getChangeSet();
+        if (!changeSet.isEmptySet()) {
+            for (ChangeLogSet.Entry entry : changeSet) {
+                String msg = entry.getMsg();
+                commitMsg += msg;
+            }
+        }
+
         //控制台地址
         StringBuilder urlBuilder = new StringBuilder();
         String jenkinsUrl = NotificationUtil.getJenkinsUrl();
-        if(StringUtils.isNotEmpty(jenkinsUrl)){
+        if (StringUtils.isNotEmpty(jenkinsUrl)) {
             String buildUrl = build.getUrl();
             urlBuilder.append(jenkinsUrl);
-            if(!jenkinsUrl.endsWith("/")){
+            if (!jenkinsUrl.endsWith("/")) {
                 urlBuilder.append("/");
             }
             urlBuilder.append(buildUrl);
-            if(!buildUrl.endsWith("/")){
+            if (!buildUrl.endsWith("/")) {
                 urlBuilder.append("/");
             }
             urlBuilder.append("console");
@@ -76,42 +93,43 @@ public class BuildBeginInfo {
         //工程名称
         this.projectName = projectName;
         //环境名称
-        if(config.topicName!=null){
+        if (config.topicName != null) {
             topicName = config.topicName;
         }
     }
 
-    public String toJSONString(){
+    public String toJSONString() {
         //参数组装
         StringBuffer paramBuffer = new StringBuffer();
-        params.forEach((key, val)->{
+        params.forEach((key, val) -> {
             paramBuffer.append(key);
             paramBuffer.append("=");
             paramBuffer.append(val);
             paramBuffer.append(", ");
         });
-        if(paramBuffer.length()==0){
+        if (paramBuffer.length() == 0) {
             paramBuffer.append("无");
-        }else{
-            paramBuffer.deleteCharAt(paramBuffer.length()-2);
+        } else {
+            paramBuffer.deleteCharAt(paramBuffer.length() - 2);
         }
 
         //耗时预计
         String durationTimeStr = "无";
-        if(durationTime>0){
+        if (durationTime > 0) {
             Long l = durationTime / (1000 * 60);
             durationTimeStr = l + "分钟";
         }
 
         //组装内容
         StringBuilder content = new StringBuilder();
-        if(StringUtils.isNotEmpty(topicName)){
+        if (StringUtils.isNotEmpty(topicName)) {
             content.append(this.topicName);
         }
         content.append("<font color=\"info\">【" + this.projectName + "】</font>开始构建\n");
         content.append(" >构建参数：<font color=\"comment\">" + paramBuffer.toString() + "</font>\n");
-        content.append(" >预计用时：<font color=\"comment\">" +  durationTimeStr + "</font>\n");
-        if(StringUtils.isNotEmpty(this.consoleUrl)){
+        content.append(" >修改日志：<font color=\"comment\">" + commitMsg + "</font>\n");
+        content.append(" >预计用时：<font color=\"comment\">" + durationTimeStr + "</font>\n");
+        if (StringUtils.isNotEmpty(this.consoleUrl)) {
             content.append(" >[查看控制台](" + this.consoleUrl + ")");
         }
 
@@ -125,7 +143,6 @@ public class BuildBeginInfo {
         String req = JSONObject.fromObject(data).toString();
         return req;
     }
-
 
 
 }
